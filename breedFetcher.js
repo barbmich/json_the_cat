@@ -1,24 +1,19 @@
 const request = require('request');
-const searchQuery = process.argv.slice(2).toString();
-console.log(`Checking description for: ${searchQuery}`);
 
-// const error = 'test';
-
-const outputBreedDesc = informationSearched => {
-  const apiUrl = `https://api.thecatapi.com/v1/breeds/search?q=${informationSearched}`;
+const fetchBreedDescription = function(breedName, callback) {
+  const apiUrl = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
   request(apiUrl, (error, response, body) => {
     if (error) {
-      console.log("database could not be reached");
-      return;
+      return callback(error, null);
     } else {
       const data = JSON.parse(body);
       if (data.length > 0) {
-        return console.log(data[0].description);
+        return callback(null, data[0].description);
       } else {
-        return console.log("No description found :(");
+        return callback(null, "No description found :(");
       }
     }
-  })
+  });
 };
 
-outputBreedDesc(searchQuery);
+module.exports = { fetchBreedDescription };
