@@ -1,23 +1,24 @@
 const request = require('request');
-const breed = process.argv.slice(2).toString();
-console.log(`Checking description for: ${breed}`);
+const searchQuery = process.argv.slice(2).toString();
+console.log(`Checking description for: ${searchQuery}`);
 
-const apiUrl = "https://api.thecatapi.com/v1/breeds/";
 // const error = 'test';
 
-const outputBreedDesc = breed => {
+const outputBreedDesc = informationSearched => {
+  const apiUrl = `https://api.thecatapi.com/v1/breeds/search?q=${informationSearched}`;
   request(apiUrl, (error, response, body) => {
-    // if (error) {
-    //   return console.log(error);
-    // }
-    const data = JSON.parse(body);
-    for (const entry of data) {
-      if (entry.name === breed) {
-        return console.log(entry.description);
+    if (error) {
+      console.log("database could not be reached");
+      return;
+    } else {
+      const data = JSON.parse(body);
+      if (data.length > 0) {
+        return console.log(data[0].description);
+      } else {
+        return console.log("No description found :(");
       }
     }
-    return console.log("No description found :(");
-  });
+  })
 };
 
-outputBreedDesc(breed);
+outputBreedDesc(searchQuery);
